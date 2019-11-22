@@ -26,15 +26,21 @@ namespace EnterwellBills.Controllers
         public ActionResult Bills()
         {
             ViewBag.Message = "Your application description page.";
-            var fakture = new List<Faktura>();
+
+            return View(GetFactureList());
+        }
+
+        private  List<Faktura> GetFactureList()
+        {
+            var result = new List<Faktura>();
 
             using (var db = new ApplicationDbContext())
             {
                 if (db.Fakture.Count() > 0)
-                    fakture = db.Fakture.OrderByDescending(f => f.DatumStvaranja).ToList();
+                    result = db.Fakture.OrderByDescending(f => f.DatumStvaranja).ToList();
             }
 
-            return View(fakture);
+            return result;
         }
 
         [HttpGet]
@@ -48,6 +54,7 @@ namespace EnterwellBills.Controllers
             {
                 Stvaratelj = User.Identity.Name,
                 DatumStvaranja = DateTime.Now,
+                Stavke = new List<Stavka>()
             };
 
             return View(faktura);
@@ -56,7 +63,26 @@ namespace EnterwellBills.Controllers
         [HttpPost]
         public ActionResult Create(Faktura faktura)
         {
-            return View();
+            faktura.Stvaratelj = User.Identity.Name;
+            faktura.DatumStvaranja = DateTime.Now;
+
+            faktura.Cijena = 0d;
+            for (int i = 0; i < faktura.Stavke.Count; i++)
+            {
+                faktura.Stavke[i].UkupnaCijena = faktura.Stavke[i].JedinicnaCijena * faktura.Stavke[i].Kolicina;
+                faktura.Cijena += faktura.Stavke[i].UkupnaCijena;
+            }
+
+            var helper = faktura.PDV.Split(':'); // helper[0] je naziv, a helper[1] je postotak
+            faktura.CijenaSaPDV = TaxCalculator.Instance.Calculate(faktura.Cijena, helper[0]);
+
+            using (var db = new ApplicationDbContext())
+            {
+                db.Fakture.Add(faktura);
+                db.SaveChanges();
+            }
+
+            return View("Bills", GetFactureList());
         }
     }
 }

@@ -7,8 +7,6 @@
 
 }
 
-<script src="~/Scripts/CreateBillScript.js"></script>
-
 <h2>@ViewBag.Title.</h2>
 
 <div class="row">
@@ -16,6 +14,12 @@
         <section id="BillForm">
             @using (Html.BeginForm("Create", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
+                <div class="form-group">
+                    <label>Stvaratelj fakture: @Model.Stvaratelj</label>
+                    <br />
+                    <label>Datum stvaranja fakture: @Model.DatumStvaranja.ToString()</label>
+                </div>
+
                 <div class="form-group">
                     @Html.LabelFor(m => m.Primatelj, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
@@ -26,19 +30,19 @@
                 <div class="form-group">
                     @Html.LabelFor(m => m.DatumDospijeca, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.DatumDospijeca, new { @type = "date", @class = "form-control datepicker", @Value = Model.DatumDospijeca.ToString("dd.mm.yyyy.") })
+                        @Html.TextBoxFor(m => m.DatumDospijeca, new { @type = "date", @class = "form-control datepicker", @Value = Model.DatumDospijeca.ToString() })
                     </div>
                 </div>
 
                 <div class="form-group">
                     <input id="DodajStavku" type="button" value="Dodaj stavku" onclick="AddRow();" class="btn btn-default" />
-                    <table>
-                        <thead>
+                    <table class="table table-striped table-hover">
+                        <thead class="thead-light">
                             <tr>
                                 <td>Opis</td>
                                 <td>Količina</td>
                                 <td>Jedinična cijena</td>
-                                <td>Ukupna cijena</td>
+                                <!--<td>Ukupna cijena</td>-->
                                 <td></td>
                             </tr>
                         </thead>
@@ -47,28 +51,54 @@
                         </tbody>
                     </table>
 
-                    <div class="row">
+                    <!--<div class="row">
                         <label>Ukupna cijena: </label>
                         <label id="cijena"></label>
-                    </div>
+                    </div>-->
                 </div>
 
                 <div class="form-group">
-                    <label>Porez</label>
                     <div class="col-md-10">
                         <!-- Viewbag.Taxes su svi porezi koje je MEF nasao -->
-                        @Html.DropDownList("Taxes", new SelectList(ViewBag.Taxes), "Please select", new { @onchange = "UpdatePrice();" })
+                        @Html.DropDownListFor(m => m.PDV, new SelectList(ViewBag.Taxes))
                     </div>
-                    <div class="row">
+                    <!--<div class="row">
                         <label>Cijena s PDVom:</label>
                         <label id="cijenaPDV"></label>
-                    </div>
+                    </div>-->
                 </div>
 
                 <div class="form-group">
-                    <input type="submit" value="Log in" class="btn btn-default" />
+                    <input type="submit" value="Stvori fakturu" class="btn btn-default" />
                 </div>
             }
         </section>
     </div>
 </div>
+
+<!-- Skripte se nalaze tu umjesto u zasebnom fileu radi Razor sintakse -->
+<script language="javascript" type="text/javascript">
+    function AddRow() {
+        @{ 
+            Model.Stavke.Add(new Stavka());
+        }
+
+        var index = $("#Stavke").children("tr").length;
+
+        var opis = "<td><input id='Opis_" + index + "' name='Stavke[" + index + "].Opis' type='text' value='' /></td>";
+        var kolicina = "<td><input id='Kolicina_" + index + "' name='Stavke[" + index + "].Kolicina' type='number' value='0' /></td>";
+        var jedCijena = "<td><input id='Cijena_" + index + "' name='Stavke[" + index + "].JedinicnaCijena' type='number' value='0' step=0.01 /></td>";
+        var remove = "<td><input id='removeStavka' type='button' value='Remove' onclick='RemoveRow(" + index + ");' /></td>";
+
+        var row = "<tr id='Stavka_" + index + "'>" + opis + kolicina + jedCijena + remove + "</tr>";
+        $("#Stavke").append(row);
+    }
+
+    function RemoveRow(id) {
+        var remove = "#Stavka_" + id;
+        $(remove).remove();
+    }
+
+    function UpdatePrice() {
+    }
+</script>
