@@ -36,7 +36,7 @@
 
                 <div class="form-group">
                     <input id="DodajStavku" type="button" value="Dodaj stavku" onclick="AddRow();" class="btn btn-default" />
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped">
                         <thead class="thead-light">
                             <tr>
                                 <td>Opis</td>
@@ -90,7 +90,7 @@
         var jedCijena = "<td><input id='Cijena_" + index + "' name='Stavke[" + index + "].JedinicnaCijena' type='number' value='0' step=0.01 /></td>";
         var remove = "<td><input id='removeStavka' type='button' value='Remove' onclick='RemoveRow(" + index + ");' /></td>";
 
-        var row = "<tr id='Stavka_" + index + "'>" + opis + kolicina + jedCijena + remove + "</tr>";
+        var row = "<tr id='Stavka_" + index + "'>" + opis + jedCijena + kolicina + remove + "</tr>";
         $("#Stavke").append(row);
     }
 

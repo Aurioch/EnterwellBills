@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using EnterwellBills.Models;
 using EnterwellBills.Extensions;
+using System.Data.Entity;
 
 namespace EnterwellBills.Controllers
 {
@@ -88,7 +89,7 @@ namespace EnterwellBills.Controllers
 
             using (var db = new ApplicationDbContext())
             {
-                faktura = db.Fakture.First(f => f.Id == id);
+                faktura = db.Fakture.Include(f => f.Stavke).First(f => f.Id == id);
             }
 
             return View(faktura);
