@@ -28,7 +28,7 @@ namespace EnterwellBills.Extensions
         CompositionContainer _container;
 
         [ImportMany]
-        IEnumerable<Lazy<ITaxCalculation, ITaxData>> _taxes;
+        private IEnumerable<Lazy<ITaxCalculation, ITaxData>> _taxes;
         private TaxCalculator()
         {
             var catalog = new AggregateCatalog();

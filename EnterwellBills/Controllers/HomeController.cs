@@ -20,16 +20,13 @@ namespace EnterwellBills.Controllers
         public ActionResult Index()
         {
             return View();
-        }
-
-        
+        }        
         public ActionResult Bills()
         {
             ViewBag.Message = "Your application description page.";
 
             return View(GetFactureList());
         }
-
         private  List<Faktura> GetFactureList()
         {
             var result = new List<Faktura>();
@@ -37,7 +34,7 @@ namespace EnterwellBills.Controllers
             using (var db = new ApplicationDbContext())
             {
                 if (db.Fakture.Count() > 0)
-                    result = db.Fakture.OrderByDescending(f => f.DatumStvaranja).ToList();
+                    result = db.Fakture.Where(f => f.Stvaratelj == User.Identity.Name).OrderByDescending(f => f.DatumStvaranja).ToList();
             }
 
             return result;
@@ -83,6 +80,18 @@ namespace EnterwellBills.Controllers
             }
 
             return View("Bills", GetFactureList());
+        }
+
+        public ActionResult Details(int id)
+        {
+            Faktura faktura = new Faktura();
+
+            using (var db = new ApplicationDbContext())
+            {
+                faktura = db.Fakture.First(f => f.Id == id);
+            }
+
+            return View(faktura);
         }
     }
 }
