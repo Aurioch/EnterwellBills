@@ -1,0 +1,37 @@
+﻿@using EnterwellBills.Models
+@model List<Faktura>
+
+@{
+    ViewBag.Title = "Bills";
+}
+
+<script src="~/Scripts/BillPopupScript.js"></script>
+
+<h2>@ViewBag.Title.</h2>
+
+@Html.ActionLink("Create New", "Create", "HomeController", new { @class = "btn btn-default" });
+<table>
+    <thead>
+        <tr>
+            <td>Broj fakture</td>
+            <td>Primatelj</td>
+            <td>Datum stvaranja</td>
+            <td>Datum dospijeća</td>
+            <td>Cijena bez PDVa</td>
+            <td>Cijena sa PDVom</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr onclick="DisplayPopup();">
+                <td>@item.ID</td>
+                <td>@item.Primatelj</td>
+                <td>@item.DatumStvaranja</td>
+                <td>@item.DatumDospijeca</td>
+                <td>@item.Cijena</td>
+                <td>@item.CijenaSaPDV</td>
+            </tr>
+        }
+    </tbody>
+</table>

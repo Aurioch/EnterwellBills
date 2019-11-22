@@ -1,0 +1,74 @@
+﻿@using EnterwellBills.Models
+@model Faktura
+
+@{
+    ViewBag.Title = "Create";
+
+
+}
+
+<script src="~/Scripts/CreateBillScript.js"></script>
+
+<h2>@ViewBag.Title.</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="BillForm">
+            @using (Html.BeginForm("Create", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Primatelj, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Primatelj, new { @class = "col-md-2 control-label" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.DatumDospijeca, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.DatumDospijeca, new { @type = "date", @class = "form-control datepicker", @Value = Model.DatumDospijeca.ToString("dd.mm.yyyy.") })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input id="DodajStavku" type="button" value="Dodaj stavku" onclick="AddRow();" class="btn btn-default" />
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Opis</td>
+                                <td>Količina</td>
+                                <td>Jedinična cijena</td>
+                                <td>Ukupna cijena</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="Stavke">
+                            <!-- Ovdje ce biti dodane stavke dinamicki -->
+                        </tbody>
+                    </table>
+
+                    <div class="row">
+                        <label>Ukupna cijena: </label>
+                        <label id="cijena"></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Porez</label>
+                    <div class="col-md-10">
+                        <!-- Viewbag.Taxes su svi porezi koje je MEF nasao -->
+                        @Html.DropDownList("Taxes", new SelectList(ViewBag.Taxes), "Please select", new { @onchange = "UpdatePrice();" })
+                    </div>
+                    <div class="row">
+                        <label>Cijena s PDVom:</label>
+                        <label id="cijenaPDV"></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Log in" class="btn btn-default" />
+                </div>
+            }
+        </section>
+    </div>
+</div>
